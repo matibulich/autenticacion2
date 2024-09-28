@@ -13,7 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 model users {
+=======
+model Users {
+>>>>>>> 2211c8e8b44e519b557849d3ee8079590552d2d1
   id    Int     @id @default(autoincrement())
   email String  @unique
   password  String
