@@ -1,4 +1,4 @@
-export interface users{
+export interface usuario{
     id: number;
     email: string;
     password: string 

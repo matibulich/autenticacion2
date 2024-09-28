@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { hashedPass } from "../services/passwordService";
-import prisma from "../modelo/users";
+import prisma from "../modelo/user";
 
 const ERROR_MESSAGES = {
   MISSING_EMAIL: "El email es obligatorio",
