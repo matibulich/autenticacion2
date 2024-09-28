@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { hashedPass, comparePass } from "../services/passwordService";
-import prisma from "../modelo/user";
+import prisma from "../modelo/users";
 import { generateToken } from "../services/jwtService";
 
 const ERROR_MESSAGES = {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { hashedPass } from "../services/passwordService";
-import prisma from "../modelo/user";
+import prisma from "../modelo/users";
 
 const ERROR_MESSAGES = {
   MISSING_EMAIL: "El email es obligatorio",
@@ -61,12 +61,15 @@ export const getById = async (req: Request, res: Response): Promise<void> => {
     if (!user) {
       res.status(404).json({ error: "Usuario no encontrado" });
       return;
+      
     }
     res.status(200).json(user);
   } catch (error: any) {
     res.status(500).json({ error: "Error en el servidor" });
   }
+  
 };
+
 
 export const putById = async (req: Request, res: Response): Promise<void> => {
   const userId = parseInt(req.params.id);
