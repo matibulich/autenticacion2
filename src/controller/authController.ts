@@ -23,7 +23,7 @@ export const registro = async (req: Request, res: Response): Promise<void> => {
     const hashedPassword = await hashedPass(password);
 
     // Crear el usuario en la base de datos
-    const user = await prisma.user.create({  // Cambiado a 'users'
+    const user = await prisma.usuario.create({  // Cambiado a 'users'
       data: {
         email,
         password: hashedPassword
@@ -54,7 +54,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if (!password) throw new Error(ERROR_MESSAGES.MISSING_PASSWORD);
 
     // Buscamos el usuario en la base de datos
-    const user = await prisma.user.findUnique({ where: { email } });  // Cambiado a 'users'
+    const user = await prisma.usuario.findUnique({ where: { email } });  // Cambiado a 'users'
     if (!user) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
 
     // Comparamos la contraseña

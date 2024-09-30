@@ -20,7 +20,7 @@ export const createUser = async (
 
     const hashedPassword = await hashedPass(password);
 
-    const user = await prisma.user.create({
+    const user = await prisma.usuario.create({
       data: {
         email,
         password: hashedPassword,
@@ -45,7 +45,7 @@ export const createUser = async (
 
 export const getAll = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.usuario.findMany();
     res.status(200).json(users); //200 es el codigo de ok para obtener el recurso
   } catch (error: any) {
     res.status(500).json({ error: "Error en el servidor" });
@@ -55,7 +55,7 @@ export const getAll = async (req: Request, res: Response): Promise<void> => {
 export const getById = async (req: Request, res: Response): Promise<void> => {
   const userId = parseInt(req.params.id);
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.usuario.findUnique({
       where: { id: userId },
     });
     if (!user) {
@@ -84,7 +84,7 @@ export const putById = async (req: Request, res: Response): Promise<void> => {
         dataUpdate.email = email;
       }
 
-      const user = await prisma.user.update({
+      const user = await prisma.usuario.update({
         where: { id: userId },
         data: dataUpdate,
       });
@@ -105,7 +105,7 @@ export const putById = async (req: Request, res: Response): Promise<void> => {
 export const deleteById = async (req: Request, res: Response): Promise<void> =>{
     const userId = parseInt(req.params.id);
     try {
-        const user = await prisma.user.delete({
+        const user = await prisma.usuario.delete({
             where:{id:userId}
         })
         res.status(200).json({
