@@ -1,6 +1,7 @@
 import express from "express"
 import { registro, login } from "../controller/authController"
 
+
 const router = express.Router()
 
 

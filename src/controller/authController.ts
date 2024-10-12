@@ -19,11 +19,15 @@ export const registro = async (req: Request, res: Response): Promise<void> => {
     if (!email) throw new Error(ERROR_MESSAGES.MISSING_EMAIL);
     if (!password) throw new Error(ERROR_MESSAGES.MISSING_PASSWORD);
 
+    // Verificar si el email ya está registrado
+    const existingUser = await prisma.usuario.findUnique({ where: { email } });
+    if (existingUser) throw new Error(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
+
     // Encriptar la contraseña
     const hashedPassword = await hashedPass(password);
 
     // Crear el usuario en la base de datos
-    const user = await prisma.usuario.create({  // Cambiado a 'users'
+    const user = await prisma.usuario.create({
       data: {
         email,
         password: hashedPassword
@@ -32,16 +36,23 @@ export const registro = async (req: Request, res: Response): Promise<void> => {
 
     // Generar el token
     const token = generateToken(user);
-    res.status(201).json({ token });
+
+ // almacenar el token en una cookie para autenticación
+    res.cookie("token", token, { 
+      httpOnly: true,
+      maxAge:7200000,//2hs
+      sameSite:"lax" });
+
+    // Redirigir al login o página de contenido después del registro
+    res.redirect('/registro.html?registered=true');
   } catch (error: any) {
-    if (error?.code === 'P2002' && error?.meta?.target?.includes('email')) {
+    if (error?.code === 'P2002' && error?.meta?.target?.includes('email')) { //error de prisma
       res.status(400).json({ error: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS });
     } else if (error instanceof Error) {
-      res.status(404).json({ error: error.message });
+      res.status(400).json({ error: error.message });
     } else {
       res.status(500).json({ error: ERROR_MESSAGES.SERVER_ERROR });
     }
-    console.log(error);
   }
 };
 
@@ -49,21 +60,28 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
   try {
-    // Verificamos que los campos no estén vacíos
     if (!email) throw new Error(ERROR_MESSAGES.MISSING_EMAIL);
     if (!password) throw new Error(ERROR_MESSAGES.MISSING_PASSWORD);
 
-    // Buscamos el usuario en la base de datos
-    const user = await prisma.usuario.findUnique({ where: { email } });  // Cambiado a 'users'
+    // Buscar el usuario en la base de datos
+    const user = await prisma.usuario.findUnique({ where: { email } });
     if (!user) throw new Error(ERROR_MESSAGES.USER_NOT_FOUND);
 
-    // Comparamos la contraseña
+    // Verificar la contraseña
     const passwordMatch = await comparePass(password, user.password);
     if (!passwordMatch) throw new Error(ERROR_MESSAGES.PASSWORD_MISMATCH);
 
     // Generar el token
     const token = generateToken(user);
-    res.status(200).json({ token });
+
+    // Guardar el token en una cookie para autenticación
+    res.cookie("token", token, { 
+      httpOnly: true,
+      maxAge:7200000, //2hs
+      sameSite:"lax" });
+
+    // Redirigir al contenido protegido
+    res.redirect("/contenido.html");
   } catch (error: any) {
     if (error instanceof Error) {
       res.status(400).json({ error: error.message });

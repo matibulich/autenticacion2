@@ -26,7 +26,8 @@ export const createUser = async (
         password: hashedPassword,
       },
     });
-    res.status(201).json(user); //201 es el codigo de estado para crear un recurso
+    res.status(201).json(user);//201 es el codigo de estado para crear un recurso
+
   } catch (error: any) {
     if (error?.code === "P2002" && error?.meta?.target?.includes("email")) {
       //error de prisma

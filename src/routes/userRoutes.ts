@@ -8,15 +8,16 @@ const router = express.Router()
 const JWT_SECRET = process.env.JWT_SECRET || "defaultSecret"
 
 //MIDDLEWARE de jswtoken para ver autenticado 
-const authenticateToken = (req:Request,res:Response, next:NextFunction)=>{
-    const authHeader = req.headers['authorization']  //obtenemos el token del header, el token se manda a través del header
-    const token = authHeader && authHeader.split(' ')[1]  //authHeader.split(' ')[1] nos da el token, el split es para separar el barerar del token y el 1 es para obtener el segundo elemento del array, el primero es el bearer
+ export const authenticateToken = (req:Request,res:Response, next:NextFunction)=>{
+    const token = req.cookies.token // Extraer el token de las cookies
+   
     if(!token){
         return res.status(401).json({error:"No esta autorizado"})
     }
 
-    jwt.verify(token, JWT_SECRET, (err, decoded)=>{
+    jwt.verify(token, JWT_SECRET, ( err:jwt.VerifyErrors | null, decoded:any)=>{
         if(err) return res.status(403).json({error:"Token invalido"})
+      
         next()
 })}
 
